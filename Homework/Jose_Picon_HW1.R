@@ -55,3 +55,13 @@ if(MaxH>60) print("yes") else print ("no")
 
 a <-150
 if(minW>a) print("yes") else print ("no")
+
+#---------------------Not part of the HW---------------
+hist(weight)
+hist(height)
+
+plot(weight, height, type = "h") #x axis, y axis, type of chart 
+plot(weight, height, type = "b") #x axis, y axis, type of chart 
+
+#comments and question numbers 
+
