@@ -16,6 +16,7 @@ readStates <- readStates[-c(1:8, 60:66),]
 #remove columns, make sure there are only 5 columns 
 readStates <- readStates[-c(6, 7, 8, 9, 10)]
 
+readStates
 #rename columns 
 colnames(readStates) [1] <- "stateName"
 colnames(readStates) [2] <- "base2010"
@@ -60,12 +61,17 @@ mean(dfStates$Jul2011)
 
 #Based	on	the	July2011	data,	what	is	the	population	of	the	state	with	the	highest	population?	What	is	the	name	of	that	state?
 
-max(dfStates$Jul2011)
-rownames(dfStates[index,]) #remove first column!! 
+#option1
+myFunc3 <- function(x,b){
+  index <- which.max(x)
+  rnames <- rownames(b)
+  state <-rnames[index]
+  return(state)
+}
+myFunc3(dfStates$Jul2011, dfStates)
 
 #Sort	the	data,	in	increasing	order,	based	on	the	July2011	data.	
 dfStates[order(dfStates$Jul2011),]
-myCars[order(-myCars$mpg),]
 
 #Step 5: Expore the distribution of the states
 
