@@ -42,11 +42,7 @@ readStates$Jul2011 <- as.numeric(readStates$Jul2011)
 readStates
 
 #Eliminate periods in state names 
-readStates$stateName <-gsub("\\. ","", readStates$stateName)
-
-
-
-readStates
+readStates$stateName <-gsub("\\.","", readStates$stateName)
 
 readStates
 #Step 3: Store and explore the dataset
@@ -107,3 +103,4 @@ index3 <- median(dfStates$Jul2011)
 n <- dfStates$Jul2011
 
 myFunc2(n, index3)
+
