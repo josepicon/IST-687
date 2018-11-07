@@ -80,10 +80,25 @@ hist(m)
 air <- datasets::airquality
 
 #11. Clean the dataset i.e) remove the NAs 
+
+length(airair[airair=='NA']) #give you number of 'NA'
 airair <- na.omit(air)
+
+str(airair) #should not see any NAs 
+
+rownames(airair) <-- NULL
+
 
 #12. . Explore	Ozone,	Wind	and	Temp	by	doing	a	‘printVecInfo’	on	each	as	well	as generating	a	histogram	for	each
 
 printVecInfo(airair$Ozone)
 printVecInfo(airair$Wind)
 printVecInfo(airair$Temp)
+
+air$Ozone[is.na(air$Ozone)] <- mean(air$Ozone, na.rm = TRUE)
+air$Solar.R[is.na(air$Solar.R)] <- mean(air$Solar.R, na.rm = TRUE)
+#replacing NAs with the average value
+
+str(air) #look at the strucutre to make sure all values are numeric 
+air$Solar.R <- as.numeric(air$Solar.R)
+str(air)
