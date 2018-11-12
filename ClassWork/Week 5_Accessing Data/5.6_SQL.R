@@ -26,3 +26,42 @@ sqldf('select AVG(mtcars.mpg) from mtcars group by mtcars.cyl')
 tapply(mtcars$mpg, mtcars$cyl==4, mean)
 
 sqldf('select AVG(mtcars, mpg) from mtcars where cyl=4')
+
+#the tapply/R style 
+tapply(mtcars$mpg, mtcars$cyl==4, mean)
+
+#trditional database style 
+sqldf('select AVG(mtcars.mpg) from mtcars where cyl=4')
+
+results <-tapply(mtcars$mpg, mtcars$cyl==4, mean)
+str(results)
+
+newresults <- unlist(results)
+str(newresults)
+
+newresults
+
+goodMPGcar <- function(mpg) {
+  if(mpg > 24)
+    return(TRUE)
+  return(FALSE)
+}
+
+goodMPGcar(mtcars$mpg[20])
+
+mtcars[8,]
+mtcars[7,]
+
+#function that goes the entire function within mtcars$mpg
+sapply(mtcars$mpg, goodMPGcar)
+
+#stores all good cars 
+goodCars <- sapply(mtcars$mpg, goodMPGcar)
+mtcars[goodCars,]
+
+meanPlusSD <- function(v) {
+  t <- mean(v) + sd(v)
+  return(t)
+}
+
+tapply(mtcars$mpg, mtcars$cyl, meanPlusSD)
