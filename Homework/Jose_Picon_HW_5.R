@@ -26,6 +26,12 @@ colnames(MyData) <-c("CASE_NUMBER","BARRACK","ACC_DATE","ACC_TIME","ACC_TIME_COD
 
 #Step 3: Understand the data using SQL (via SQLDF)
 
+#prof version, * means everything 
+step3result <- sqldf("select count(*), DAY_OF_WEEK from MyData Group By DAY_OF_WEEK")
+step3result <- sqldf("select count (*) from MyData where INJURY='YES'")
+
+#my version 
+
 #How many accidents happened on Sunday 
 
 #version1 
@@ -38,6 +44,7 @@ SunAcc
 SundayAcc <- sqldf("select DAY_OF_WEEK, count(DAY_OF_WEEK) from MyData where DAY_OF_WEEK like'%SUNDAY%' group by DAY_OF_WEEK") 
 SundayAcc
 
+
 #How	many	accidents	had	injuries
 
 NumInjuries <- sqldf("select count(INJURY) from MyData where INJURY = 'YES'" )
@@ -48,7 +55,14 @@ InjByDay
 
 #Step 4: Understand the data using tapply 
 
+#prof version 
+tapply(MyData$DAY_OF_WEEK, MyData$DAY_OF_WEEK=='SUNDAY', length)
+tapply(MyData$INJURY, MyData$INJURY=='YES', length)
+tapply(MyData$DAY_OF_WEEK, list(MyData$DAY_OF_WEEK, MyData$INJURY=='YES'), length)
   
+
+#Myversion 
+
 #How	many	accidents	happen	on	Sunday
 
 #version1
