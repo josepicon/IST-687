@@ -15,7 +15,7 @@ air$Solar.R[is.na(air$Solar.R)] <- mean(air$Solar.R, na.rm = TRUE) #replace NAs 
 ---------
 #compoenents of ggplot: the data set, the aesthetics (x, y axis, color) 
 
-  #or can create geom_line(), stat_smooth() shows range within the numbers 
+#or can create geom_line(), stat_smooth() shows range within the numbers 
 p <- ggplot(data=air, aes(x=ozone, y=Temp, color=Month)) + geom_point() + stat_smooth()
 
 p + geom_xxx() + Stat_xxx()
