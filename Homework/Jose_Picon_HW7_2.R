@@ -5,7 +5,7 @@ install.packages("readxl") #used to read xl files
 install.packages("sqldf") 
 install.packages("gdata") #to reformat some data sets, such as cbinx function
 install.packages("zipcode")
-install.packages("googleway")
+
 library("ggplot2")
 library("openintro")
 library("ggmap")
@@ -13,11 +13,10 @@ library("readxl")
 library("sqldf")
 library("gdata")
 library("zipcode")
-library("googleway")
+
 
 #Step1: Load the Data
 
-?ggmap
 #Read the data 
 
 setwd("/Users/josepicon/Desktop/Projects /IST 687")
@@ -75,15 +74,25 @@ dfSimple$stateName <- tolower(dfSimple$stateName)
 
 #3: Show the US map, representing the color with the average median income of that state 
 
+ditch_the_axes <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank()
+)
+
 us <- map_data("state")
 
 MapIncome <- ggplot(dfSimple, aes(map_id=stateName))
 MapIncome <- MapIncome + geom_map(map=us, aes(fill=dfSimple$income)) #fills heatmap with income values
 MapIncome <- MapIncome + expand_limits(x=us$long, y=us$lat) #adds US map into the heatmap, long/lat came from map_data
-
 MapIncome <- MapIncome + coord_map() #better looking 
-MapIncome <- MapIncome + ggtitle("avg median income by state")
+MapIncome <- MapIncome + ggtitle("avg median income by state") + theme(plot.title = element_text(hjust=0.5))
+MapIncome <- MapIncome + guides(fill=guide_legend(title="Income")) + ditch_the_axes
 MapIncome
+
 
 #4: Create	a	second	map	with	color	representing the	population	of	the	state
 
@@ -92,60 +101,64 @@ MapPop <- MapPop + geom_map(map=us, aes(fill=dfSimple$pop))
 MapPop <- MapPop + expand_limits(x=us$long, y=us$lat)
 
 MapPop <- MapPop + coord_map() #better looking 
-MapPop <- MapPop + ggtitle("population by state")
+MapPop <- MapPop + ggtitle("population by state") + theme(plot.title = element_text(hjust=0.5))
+MapPop <- MapPop + guides(fill=guide_legend(title="Population")) + ditch_the_axes
 MapPop
 
 #Step 3: Show the income per zip code
 
-MapZip <- ggplot(dfSimple, aes(map_id=stateName))
-MapZip <- MapZip + geom_map(map=us, aes(fill="black", color="red"))
+# Draw each zip code on map where color of dot is based on median income
+dfNew$stateName <- state.name[match(dfNew$state,state.abb)]
+dfNew$stateName <- tolower(dfNew$stateName)
 
-MapZip <- MapZip + expand_limits(x=us$long, y=us$lat)
+MapZip <- ggplot(dfNew, aes(map_id = stateName))
+MapZip <- MapZip + geom_map(map=us, fill="black", color="red")
+
+MapZip <- MapZip + expand_limits(x = us$long, y = us$lat)
 
 MapZip <- MapZip + geom_point(data=dfNew, aes(x=dfNew$longitude, y=dfNew$latitude, color=dfNew$median))
-
+MapZip <- MapZip + coord_map()
+MapZip <- MapZip + ggtitle("income per zip code") + theme(plot.title=element_text(hjust=0.5))
+MapZip <- MapZip  + ditch_the_axes
+MapZip
 
 #Step 4: generate a map showing density of zipcode
 
-MapDensity <- ggplot(dfSimple, aes(map_id=stateName))
+MapDensity <- ggplot(dfNew, aes(map_id=stateName))
 MapDensity <- MapDensity + geom_map(map=us, fill="black", color="red")
-
 MapDensity <- MapDensity + expand_limits(x=us$long, y=us$lat)
-
-MapDensity <- MapDensity + stat_density_2d(data=dfNew, aes(x=dfNew$longitude, y=dfNew$latitude, color=dfNew$median))
-
+MapDensity <- MapDensity + stat_density_2d(data=dfNew, aes(x=dfNew$longitude, y=dfNew$latitude))
 MapDensity <- MapDensity + coord_map()
+MapDensity <- MapDensity + ggtitle("zip code density") + theme(plot.title=element_text(hjust=0.5))
+MapDensity <- MapDensity + ditch_the_axes
+MapDensity
 
 
+#Step 5: Zoom in to the region around NYC Repeat	steps	3	&	4,	but	have	the	image	/	map	be	of	the	northeast	U.S.	(centered	around	New	York).
 
-#Step 5: Zoom in to the region around NYC 
-
-#1: Repeat	steps	3	&	4,	but	have	the	image	/	map	be	of	the	northeast	U.S.	(centered	around	New	York).
-
-API_KEY <- "AIzaSyAX4zk2kHEUb0JTyNKvvvYrXzvSyWYQ8io"
-zoomGeo <- google_geocode("new york", key = API_KEY) #calling Google from R in ggmap
-zoomAmount <- 5 
-
+zoomGeo <- geocode("Syracuse, NY", source = "dsk")
+zoomAmount <- 10
 
 centerx <- zoomGeo$lon
 centery <- zoomGeo$lat
 
 ylimit <- c(centery-zoomAmount, centery+zoomAmount)
-ylimit <- c(centerx-zoomAmount, centerx+zoomAmount)
+xlimit <- c(centerx-zoomAmount, centerx+zoomAmount)
 
-MapZipZoom <- MapZip + xlim(xlimit) + ylim(ylimit) + coord_map 
+#Income by Zip, NY Zoom
+MapZipZoom <- MapZip + xlim(xlimit) + ylim(ylimit) + coord_map()
+
+MapZipZoom <- MapZipZoom + geom_point(aes(x=centerx, y=centery), color="orange", size=1)
+
+MapZipZoom <- MapZipZoom + ggtitle("Income by Zip around New York ") + theme(plot.title=element_text(hjust=0.5))
+MapZipZoom
+
+#Zipcode Density, NY Zoom
+MapDensZoom <- MapDensity + xlim(xlimit) + ylim(ylimit) + coord_map()
+
+MapDensZoom <- MapDensZoom + geom_point(aes(x=centerx, y=centery), color="orange", size=1)
+
+MapDensZoom <- MapDensZoom + ggtitle("Income by Zip around New York ") + theme(plot.title=element_text(hjust=0.5)) + ditch_the_axes
+MapDensZoom
 
 
-
-
-
-nymap <- sqldf("select long, lat, region from us where region = 'new york'")
-
-dfNewYork <- sqldf("select zip, city, avg(median) as income, sum(population) as pop, longitude as long, latitude as lat from dfNew where state = 'NY' group by city")
-
-NYZip <- ggplot(dfNewYork, aes(map_id=state))
-NYZip <- NYZip + geom_map(map=nymap, fill="black", color="white")
-
-?geom_map
-NYZip <- NYZip + geom_point(data=dfNewYork, aes(x=nymap$long, y=nymap$lat, color=dfNewYork$income))
-NYZip
