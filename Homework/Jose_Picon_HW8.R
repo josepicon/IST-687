@@ -13,7 +13,6 @@ str(df)
 #4: create bivariate plots of number of baby fawns versus antelope population, the	precipitation	that	year,	and	the	severity	of	the	winter.	Your	code	should	produce	three	separate	plots. make sure the y and x axis are labeled 
 
 colnames(df) <- c("fawns", "adults", "percipitation", "winter")
-View(df)
 
 fva <- ggplot(df, aes(x = fawns, y=adults)) + geom_point()
 fva + stat_smooth(method = "lm", col = "red")
@@ -27,7 +26,7 @@ fvw + stat_smooth(method = "lm", col = "red")
 
 #5: create	three	regression	models	of	increasing	complexity	using	lm().
 
-#In	the	first	model,	predict	the	number	of	fawns	from	the	severity	of	the	winter
+#In	the	first	model, predict	the	number	of	fawns	from	the	severity	of	the	winter
 
 fvw.ml = lm(formula = fawns ~ winter, data = df)
 plot(df$fawns, df$winter)
